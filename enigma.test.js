@@ -30,3 +30,15 @@ test('non latin chars', () => {
 test('mix latin, non latin and number', () => {
   expect(enigma('encode', '7', mixcontent)).toBe(mixcontent7);
 });
+
+test('Incorrect action', () => {
+  expect(() => enigma('incorrect', '7', original)).toThrow(Error);
+});
+
+test('Incorrect shift', () => {
+  expect(() => enigma('encode', 'ss', original)).toThrow(Error);
+});
+
+test('Incorrect data', () => {
+  expect(() => enigma('encode', 'ss', [dddd])).toThrow(Error);
+});
