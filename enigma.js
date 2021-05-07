@@ -18,14 +18,6 @@ function enigma(action, shift, text) {
   const regexSmallChars = new RegExp(/[a-z]/);
   const regexLatinChars = new RegExp(/[A-Za-z]/);
 
-  let locShift = 0;
-
-  if (action === 'encode') {
-    locShift = shift < 0 ? ALPHABET_LENGTH + +shift : shift;
-  } else {
-    locShift = shift < 0 ? -shift : ALPHABET_LENGTH - +shift;
-  }
-
   return text
     .split('')
     .map(char => {
@@ -35,11 +27,19 @@ function enigma(action, shift, text) {
 
       const alphabet = regexSmallChars.test(char) ? ALPHABET : ALPHABET_CAPITAL;
 
-      const newIndex = (alphabet.findIndex(c => c === char) + +locShift) % ALPHABET_LENGTH;
+      const charIndex = alphabet.findIndex(c => c === char);
+
+      const newIndex = findNewIndex(charIndex, shift, action);
 
       return alphabet[newIndex];
     })
     .join('');
+}
+
+function findNewIndex(charIndex, shift, action, length = ALPHABET_LENGTH) {
+  const locShift = action === 'encode' ? +shift : -shift;
+  const calculateIndex = (charIndex + locShift) % length;
+  return calculateIndex < 0 ? length + calculateIndex : calculateIndex;
 }
 
 module.exports = {
