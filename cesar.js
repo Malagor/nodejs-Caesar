@@ -1,12 +1,9 @@
 const {Command} = require('commander');
-const {readFile, writeFile} = require('fs');
+const {createReadStream, createWriteStream} = require('fs');
 const {enigma} = require('./enigma');
 const program = new Command();
 
-const READ_FILENAME = 'input.txt';
-const WRITE_FILENAME = 'output.txt';
-// const READ_FILENAME = 'output.txt';
-// const WRITE_FILENAME = 'decode.txt';
+const ACTION_TYPE = ['encode', 'decode'];
 
 program.version('0.0.1');
 program
@@ -15,14 +12,14 @@ program
   .option('-i, --input <filename>', 'an input file')
   .option('-o, --output <filename>', 'an output file');
 
-
 program.parse(process.argv);
 
 const options = program.opts();
-// console.log(options);
 
-const isShiftValid = options.shift && !isNaN(+options.shift);
-const isActionValid = options.action === 'encode' || options.action === 'decode';
+const {shift, action, output, input} = options;
+
+const isShiftValid = shift && !isNaN(+shift);
+const isActionValid = ACTION_TYPE.includes(action);
 
 if (!isShiftValid || !isActionValid) {
   if (!isShiftValid) {
@@ -35,23 +32,32 @@ if (!isShiftValid || !isActionValid) {
   process.exit(-1);
 }
 
-// if (options.shift) console.log('Shift:' + options.shift);
-// if (options.input) console.log('Input:' + options.input);
-// if (options.output) console.log('Output:' + options.output);
-// if (options.action) console.log('Action:' + options.action);
+const inputStream = input
+  ? createReadStream(input)
+  : process.stdin;
 
+const outputStream = output
+  ? createWriteStream(output)
+  : process.stdout;
 
-readFile(options.input || READ_FILENAME, 'utf-8', (err, data) => {
-  if (err) throw err;
+inputStream.on('readable', () => {
+  const buffer = inputStream.read();
+  if (buffer && buffer.includes('\n')) {
+    const encode = enigma(action, shift, buffer.toString());
+    outputStream.write(encode);
+  }
+});
 
-  const newData = enigma(options.action, options.shift, data);
+inputStream.on('end', () => {
+  console.log(`Data ${action}`);
+});
 
-  writeFile(options.output || WRITE_FILENAME, newData, (err) => {
-      if (err) throw err;
-      console.log('Данные записаны');
-    }
-  )
-
+inputStream.on('error', (err) => {
+  if (err.code === 'ENOENT') {
+    console.log('File not found');
+  } else {
+    console.error(err);
+  }
 });
 
 //
