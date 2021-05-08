@@ -1,21 +1,32 @@
-const {createReadStream, createWriteStream} = require('fs');
+const fs = require('fs');
 
-function createStreams(input = '', output = '', error = '') {
+function createStreams(input, output) {
+  // input Stream
   const inputStream = input
-    ? createReadStream(input)
+    ? fs.createReadStream(input)
     : process.stdin;
 
+  inputStream.on('error', errorHandler);
+
+  // output Stream
   const outputStream = output
-    ? createWriteStream(output)
+    ? fs.createWriteStream(output, {flags: 'a'})
     : process.stdout;
 
-  const errorStream = error
-    ? createWriteStream(error)
-    : process.stdout;
+  outputStream.on('error', errorHandler);
 
-  return [inputStream, outputStream, errorStream];
+  return {inputStream, outputStream};
 }
 
-module.exports ={
+function errorHandler(err) {
+  if (err.code === 'ENOENT') {
+    process.stderr.write('Incorrect write file');
+  } else {
+    process.stderr.write(err);
+  }
+  process.exit(-1);
+}
+
+module.exports = {
   createStreams
 };
