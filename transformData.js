@@ -1,26 +1,16 @@
+const { Transform } = require('stream');
 const {enigma} = require('./enigma');
 
-function transformData(action, shift, inputStream, outputStream, errorStream) {
-    inputStream.on('readable', () => {
-      const buffer = inputStream.read();
-      if (buffer && buffer.includes('\n')) {
-        const encode = enigma(action, shift, buffer.toString());
-        outputStream.write(encode);
-      }
-    });
+function transformData(action, shift) {
 
-    inputStream.on('end', () => {
-      console.log(`Data ${action}`);
-    });
+  const encode = enigma.bind(null, action, shift);
 
-    inputStream.on('error', (err) => {
-      if (err.code === 'ENOENT') {
-        errorStream.write('File not found');
-      } else {
-        errorStream.write(err.toString());
-      }
-      process.exit(-1);
-    });
+  return new Transform({
+    transform(chunk, encoding, callback) {
+      this.push(encode(chunk.toString()));
+      callback();
+    }
+  });
 }
 
 module.exports = {
