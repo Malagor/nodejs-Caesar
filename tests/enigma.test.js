@@ -1,4 +1,6 @@
-const {enigma} = require('./enigma');
+const {describe, expect} = require("@jest/globals");
+
+const {enigma} = require('../enigma');
 
 const original = 'This is secret. Message about "_" symbol!';
 const encode7 = 'Aopz pz zljyla. Tlzzhnl hivba "_" zftivs!';

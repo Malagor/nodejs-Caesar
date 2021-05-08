@@ -1,4 +1,6 @@
-const {checkParams} = require('./checkParams');
+const {describe, expect} = require("@jest/globals");
+
+const {checkParams} = require('../checkParams');
 
 const shiftIsNumber = 10;
 const shiftIsNegativeNumber = -10;
