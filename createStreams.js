@@ -6,24 +6,37 @@ function createStreams(input, output) {
     ? fs.createReadStream(input)
     : process.stdin;
 
-  inputStream.on('error', errorHandler);
+  inputStream.on('error', (err) => errorHandler(err, input));
 
   // output Stream
-  const outputStream = output
-    ? fs.createWriteStream(output, {flags: 'a'})
-    : process.stdout;
+  let outputStream;
+  if (output) {
+    const hasFile = checkFileExistsSync(output);
 
-  outputStream.on('error', errorHandler);
+    if (hasFile) {
+      outputStream = fs.createWriteStream(output, {flags: 'a'});
+    } else {
+      errorHandler(null, output);
+    }
+  } else {
+    outputStream = process.stdout;
+  }
 
   return {inputStream, outputStream};
 }
 
-function errorHandler(err) {
-  if (err.code === 'ENOENT') {
-    process.stderr.write('Incorrect write file');
-  } else {
-    process.stderr.write(err);
+function checkFileExistsSync(filepath) {
+  let flag = true;
+  try {
+    fs.accessSync(filepath, fs.constants.F_OK);
+  } catch (err) {
+    flag = false;
   }
+  return flag;
+}
+
+function errorHandler(err, filename) {
+  process.stderr.write(`There are problems accessing the file: "${filename}".`);
   process.exit(-1);
 }
 
