@@ -13,13 +13,13 @@ Task 1: https://github.com/rolling-scopes-school/basic-nodejs-2021Q2/blob/master
 - `-o, --output` - имя файла куда будут записаны результаты преобразования. Если не указано, то результат будет выведен в консоль
 
 **Вывоз приложения:**
-- `node cesar <params>`
+- `node caesar <params>`
 
 **Варианты запуска приложения**
-- > `node cesar -s 7 --action encode`
-- > `node cesar --input=input.txt -a decode --shift -100`
-- > `node cesar --action encode -s 13 -o output.txt`
-- > `node cesar -i input.txt --action encode -s -10000 -o output.txt`
+- > `node caesar -s 7 --action encode`
+- > `node caesar --input=input.txt -a decode --shift -100`
+- > `node caesar --action encode -s 13 -o output.txt`
+- > `node caesar -i input.txt --action encode -s -10000 -o output.txt`
 ### Scripts
 
 #### Tests
