@@ -15,17 +15,14 @@ function enigma(action, shift, text) {
     throw new Error('Action must be encode/decode');
   }
 
-  const regexSmallChars = new RegExp(/[a-z]/);
-  const regexLatinChars = new RegExp(/[A-Za-z]/);
-
   return text
     .split('')
     .map(char => {
-      if (!regexLatinChars.test(char)) {
+      if (!/[A-Za-z]/.test(char)) {
         return char;
       }
 
-      const alphabet = regexSmallChars.test(char) ? ALPHABET : ALPHABET_CAPITAL;
+      const alphabet = /[a-z]/.test(char) ? ALPHABET : ALPHABET_CAPITAL;
 
       const charIndex = alphabet.findIndex(c => c === char);
 
