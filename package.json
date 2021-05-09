@@ -1,7 +1,7 @@
 {
   "name": "intro",
   "version": "1.0.0",
-  "main": "cesar.js",
+  "main": "caesar.js",
   "scripts": {
     "test": "jest"
   },
