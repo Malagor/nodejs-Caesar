@@ -1,11 +1,6 @@
 const fs = require('fs');
 
 function createStreams(input, output) {
-  // input Stream
-  // const inputStream = input
-  //   ? fs.createReadStream(input)
-  //   : process.stdin;
-
   let inputStream;
   if (input) {
     const hasFile = checkFileExistsSync(input, fs.constants.F_OK | fs.constants.R_OK);
@@ -44,7 +39,6 @@ function checkFileExistsSync(filepath, mode) {
   let flag = true;
   try {
     fs.accessSync(filepath, mode);
-    // fs.accessSync(filepath, fs.constants.F_OK);
   } catch (err) {
     flag = false;
   }
